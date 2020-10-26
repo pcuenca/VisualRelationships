@@ -345,6 +345,31 @@ class Speaker:
 
         return scores, uid2pred
 
+    def inference(self, eval_tuple, iters=-1):
+        dataset, th_dset, dataloader = eval_tuple
+
+        # Generate sents by neural speaker
+        all_insts = []
+        uids = []
+        word_accu = 0.
+        for i, (uid, src, trg) in enumerate(dataloader):
+            if i == iters:
+                break
+            src, trg = src.cuda(), trg.cuda()
+
+            # get sentence level predictions
+            infer_inst = self.infer_batch(src, trg, sampling=False, train=False)
+            all_insts.extend(infer_inst)
+            uids.extend(uid)
+
+        # Return result mapping back uids to filenames
+        # Note: only the filename (not the path) is included, so this won't work
+        # for repeated filenames (such as those in multiple crappification runs).
+        assert len(uids) == len(all_insts)
+        uid2pred = {th_dset.train_data[uid].name: self.tok.decode(self.tok.shrink(pred))
+                    for (uid, pred) in zip(uids, all_insts)}
+        return uid2pred
+
     def save(self, name):
         encoder_path = os.path.join(self.output, '%s_enc.pth' % name)
         decoder_path = os.path.join(self.output, '%s_dec.pth' % name)
