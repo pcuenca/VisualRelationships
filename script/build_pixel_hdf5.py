@@ -39,8 +39,8 @@ for p in resnet_extractor.parameters():
     p.requires_grad = False
 
 DATASETS = [
-        'nlvr2',
-        'spotdiff',
+        #'nlvr2',
+        #'spotdiff',
         'adobe',
 ]
 
@@ -65,6 +65,7 @@ for ds_name in DATASETS:
         for datum in tqdm(data):
             for key in ['img0', 'img1']:
                 img_path = datum[key]
+                img_path = os.path.join(ds_root, ds_name, 'images', img_path)
                 img_processed_pixels = img_transform(pil_loader(img_path))  # 3 x 224 x 224 in cpu Tensor
                 img_raw[key].append(img_processed_pixels.numpy())
         

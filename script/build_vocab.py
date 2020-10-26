@@ -5,8 +5,8 @@ from tok import Tokenizer
 import json
 
 DATASETS = [
-        'nlvr2',
-        'spotdiff',
+        #'nlvr2',
+        #'spotdiff',
         'adobe',
 ]
 

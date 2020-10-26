@@ -5,7 +5,7 @@ dataset=adobe
 
 # Main metric to use
 # One of 'BLEU', 'METEOR', 'ROUGE_L', 'CIDEr', 'Bleu_1'~'Bleu_4', 'F1' (F1 is the f1 score of BLEU and ROUGE_L)
-metric=CIDEr
+metric=METEOR
 
 # model from 'init', 'newheads', 'newcross', 'dynamic', which are the four model in paper 
 # related to the four subsections in the paper
@@ -28,8 +28,8 @@ cp $0 snap/$log_dir/run.bash
 cp -r src snap/$log_dir/src
 
 CUDA_VISIBLE_DEVICES=$gpu stdbuf -i0 -o0 -e0 python src/main.py --output snap/$log_dir \
-    --maxInput 40 --metric $metric --model $model --imgType pixel --worker 4 --train speaker --dataset $dataset \
+    --maxInput 40 --metric $metric --model $model --imgType pixel --worker 16 --train speaker --dataset $dataset \
     --batchSize 95 --hidDim 512 --dropout 0.5 \
     --seed 9595 \
-    --optim adam --lr 1e-4 --epochs 500 \
+    --optim adam --lr 1e-4 --epochs 100 \
     | tee log/$log_dir.log
